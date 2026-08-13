@@ -1,0 +1,40 @@
+import { Card } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { AnalystRatingBar } from "@/components/dashboard/analyst-rating-bar";
+import type { AnalystRatingRow } from "@/types/dashboard";
+
+interface AnalystRatingCardProps {
+  data: AnalystRatingRow[];
+}
+
+export function AnalystRatingCard({ data }: AnalystRatingCardProps) {
+  const maxCount = Math.max(...data.map((r) => r.count));
+
+  return (
+    <Card>
+      <div className="border-b border-surface-border pb-4 mb-4">
+        <SectionHeader title="Analyst rating" />
+      </div>
+
+      <div className="space-y-3">
+        {data.map((row) => (
+          <div key={row.label} className="flex items-center gap-3">
+            <span className="w-24 text-sm text-text-secondary shrink-0 truncate">
+              {row.label}
+            </span>
+            <div className="flex-1">
+              <AnalystRatingBar
+                count={row.count}
+                maxCount={maxCount}
+                filledRatio={row.count / maxCount}
+              />
+            </div>
+            <span className="w-8 text-right text-sm font-medium text-text-primary tabular-nums">
+              {row.count}
+            </span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
