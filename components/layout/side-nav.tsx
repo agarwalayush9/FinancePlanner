@@ -11,7 +11,7 @@ export function SideNav() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-surface-panel border-r border-surface-border transition-all duration-300 shrink-0",
+        "hidden md:flex flex-col h-[calc(100vh-20px)] m-[10px] rounded-[20px] bg-surface-panel border border-surface-border overflow-hidden transition-all duration-300 shrink-0",
         collapsed ? "w-[68px]" : "w-[260px]"
       )}
     >

@@ -15,11 +15,11 @@ import {
 
 export default function DashboardPage() {
   return (
-    <div className="flex h-screen bg-surface text-text-primary">
+    <div className="flex h-screen bg-surface text-text-primary overflow-hidden">
       <SideNav />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden m-[10px] bg-white rounded-[20px] border border-surface-border">
         <TopBar />
-        <div className="px-8 py-6 space-y-6">
+        <div className="px-4 md:px-8 py-6 space-y-6 max-w-7xl mx-auto w-full" style={{ zoom: 1.1 }}>
           <StatsPanel ticker="NVDA" stats={statsData} />
 
           <PriceTargetCard
