@@ -4,17 +4,17 @@ import { AnalystRatingBar } from "@/components/dashboard/analyst-rating-bar";
 import type { AnalystRatingRow } from "@/types/dashboard";
 
 interface AnalystRatingCardProps {
+  className?: string;
   data: AnalystRatingRow[];
 }
 
-export function AnalystRatingCard({ data }: AnalystRatingCardProps) {
+export function AnalystRatingCard({ data, className }: AnalystRatingCardProps) {
   const maxCount = Math.max(...data.map((r) => r.count));
 
   return (
-    <Card>
-      <div className="border-b border-surface-border pb-4 mb-4">
-        <SectionHeader title="Analyst rating" />
-      </div>
+    <Card className={className}>
+      <SectionHeader title="Analyst rating" />
+
 
       <div className="space-y-3">
         {data.map((row) => (

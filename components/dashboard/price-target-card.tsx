@@ -1,21 +1,22 @@
 "use client";
 
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   ReferenceLine,
   ReferenceArea,
+  ReferenceDot,
   ResponsiveContainer,
-  Tooltip,
 } from "recharts";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { PriceTargetPoint } from "@/types/dashboard";
 
 interface PriceTargetCardProps {
+  className?: string;
   data: PriceTargetPoint[];
   currentPrice: string;
   secondaryLabel: string;
@@ -25,6 +26,62 @@ interface PriceTargetCardProps {
   todayIndex: number;
 }
 
+/* Custom SVG label rendered beside the avg-target dashed line */
+const CustomTargetLabel = ({ viewBox, value }: any) => {
+  if (!viewBox) return null;
+  const x = (viewBox.x ?? 0) + (viewBox.width ?? 0) - 78;
+  const y = viewBox.y ?? 0;
+  const formattedValue = `$${Number(value).toLocaleString()}`;
+
+  return (
+    <g>
+      {/* Dark rounded rectangle */}
+      <rect
+        x={x}
+        y={y - 20}
+        width={78}
+        height={40}
+        rx={8}
+        ry={8}
+        fill="#18181B"
+      />
+      {/* "Avg Target" label */}
+      <text
+        x={x + 39}
+        y={y - 3}
+        fill="#A1A1AA"
+        fontSize={10}
+        fontWeight={500}
+        textAnchor="middle"
+      >
+        Avg Target
+      </text>
+      {/* Dollar value */}
+      <text
+        x={x + 39}
+        y={y + 14}
+        fill="#FFFFFF"
+        fontSize={12}
+        fontWeight={700}
+        textAnchor="middle"
+      >
+        {formattedValue}
+      </text>
+    </g>
+  );
+};
+
+/* Custom Y-Axis tick to ensure absolute right alignment */
+const CustomYAxisTick = ({ x, y, payload }: any) => {
+  // When margin.right=110, Recharts sets x ≈ W - 99.
+  // We add 99 to push the text exactly to the right edge (W).
+  return (
+    <text x={x + 30} y={y} dy={4} textAnchor="end" fill="#9797A3" fontSize={12}>
+      {payload.value}
+    </text>
+  );
+};
+
 export function PriceTargetCard({
   data,
   currentPrice,
@@ -33,17 +90,29 @@ export function PriceTargetCard({
   avgTarget,
   projectionStartIndex,
   todayIndex,
+  className,
 }: PriceTargetCardProps) {
-  const projectionStartDate = data[projectionStartIndex]?.date ?? "";
-  const todayDate = data[todayIndex]?.date ?? "";
-  const lastDate = data[data.length - 1]?.date ?? "";
+  const lastIndex = data.length - 1;
+  const lastPrice = data[lastIndex]?.price ?? 0;
+
+  // Map data to include a numeric index for XAxis
+  const chartData = data.map((d, i) => ({ ...d, idx: i }));
+
+  // 9 evenly spaced ticks → 8 columns
+  const xTicks: number[] = [];
+  for (let i = 0; i <= 8; i++) {
+    xTicks.push(Math.round((i / 8) * lastIndex));
+  }
 
   return (
-    <Card>
-      <SectionHeader title="Price target" />
+    <Card className={className}>
+      {/* Section header with divider */}
+      <div className="border-b border-[#E5E5EA] pb-3 mb-0">
+        <SectionHeader title="Price target" actionClassName="!rounded-[10%]" />
+      </div>
 
-      {/* Sub-header metrics */}
-      <div className="flex items-center justify-between mb-6">
+      {/* Sub-header metrics row */}
+      <div className="flex items-center justify-between pt-4 pb-2">
         <div>
           <span className="text-sm text-text-secondary">Current price</span>
           <span className="ml-2 text-sm font-semibold text-text-primary">
@@ -59,121 +128,114 @@ export function PriceTargetCard({
       </div>
 
       {/* Chart */}
-      <div className="h-[280px] -mx-2">
+      <div className="h-[300px] -mb-6 mt-2 [&_.recharts-surface]:overflow-visible">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 20, right: 60, bottom: 0, left: 0 }}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 16, right: 0, bottom: 10, left: 0 }}
+          >
             <defs>
-              <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#6366F1" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#6366F1" stopOpacity={0.01} />
+              <linearGradient id="projectionFade" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#6366F1" stopOpacity={0} />
+
+                <stop offset="100%" stopColor="#6366F1" stopOpacity={0.32} />
               </linearGradient>
             </defs>
 
-            {/* Faint vertical dashed gridlines */}
+            {/* Horizontal grid lines only (4 rows from YAxis ticks) */}
             <CartesianGrid
-              horizontal={false}
-              vertical={true}
+              horizontal={true}
+              vertical={false}
               strokeDasharray="3 3"
-              stroke="#E6E6EA"
+              stroke="#D1D1D6"
+              strokeOpacity={0.5}
             />
 
+            {/* 9 manual vertical dashed lines → 8 uniform columns with both borders */}
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <ReferenceLine
+                key={`vgrid-${i}`}
+                x={Math.round((i / 8) * lastIndex)}
+                stroke="#D1D1D6"
+                strokeDasharray="3 3"
+                strokeOpacity={0.5}
+              />
+            ))}
+
+            {/* Numeric X axis — hidden labels */}
             <XAxis
-              dataKey="date"
+              type="number"
+              dataKey="idx"
+              domain={[0, lastIndex]}
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: "#9797A3" }}
-              interval="preserveStartEnd"
-              tickFormatter={(value: string) => {
-                const parts = value.split(" ");
-                return parts[0] ?? value;
-              }}
+              tick={false}
+              ticks={xTicks}
+              allowDataOverflow={false}
             />
 
+            {/* Y axis on right — 5 evenly spaced ticks = 4 uniform rows */}
             <YAxis
               orientation="right"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: "#9797A3" }}
-              domain={["dataMin - 10", "dataMax + 15"]}
-              tickCount={5}
+              tick={<CustomYAxisTick />}
+              domain={[100, 300]}
+              ticks={[100, 150, 200, 250, 300]}
+              width={40}
             />
 
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#111114",
-                border: "none",
-                borderRadius: "8px",
-                color: "#fff",
-                fontSize: "12px",
-                padding: "8px 12px",
-              }}
-              labelStyle={{ color: "#9797A3", fontSize: "11px" }}
-              formatter={(value: number) => [`$${value}`, "Price"]}
-            />
-
-            {/* Shaded projection region */}
+            {/* Purple-tinted background with fade over the entire chart area */}
             <ReferenceArea
-              x1={projectionStartDate}
-              x2={lastDate}
-              fill="#6366F1"
-              fillOpacity={0.04}
+              x1={0}
+              x2={lastIndex - 18}
+              fill="url(#projectionFade)"
               stroke="none"
+              ifOverflow="extendDomain"
             />
 
-            {/* Average target dashed line */}
+            {/* Average target horizontal dashed line */}
             <ReferenceLine
-              y={avgTarget}
-              stroke="#6366F1"
-              strokeDasharray="4 4"
-              strokeWidth={1.5}
-              label={{
-                value: `Avg Target $${avgTarget}`,
-                position: "right",
-                fill: "#FFFFFF",
-                fontSize: 11,
-                fontWeight: 600,
-                offset: 0,
-              }}
-            />
-
-            {/* Today marker */}
-            <ReferenceLine
-              x={todayDate}
-              stroke="#9797A3"
+              segment={[{ x: 0, y: avgTarget }, { x: lastIndex, y: avgTarget }]}
+              stroke="#1C1C1E"
+              strokeDasharray="6 4"
               strokeWidth={1}
-              strokeDasharray="3 3"
+              strokeOpacity={0.5}
+              label={<CustomTargetLabel value={avgTarget * 11.25} />}
             />
 
-            {/* Price area */}
-            <Area
+            {/* Solid vertical indigo line at chart right edge */}
+            <ReferenceLine
+              x={lastIndex - 18}
+              stroke="#6366F1"
+              strokeWidth={2.5}
+              strokeOpacity={0.9}
+            />
+
+            {/* The price line */}
+            <Line
               type="monotone"
               dataKey="price"
               stroke="#6366F1"
               strokeWidth={2}
-              fill="url(#priceGradient)"
               dot={false}
-              activeDot={{
-                r: 5,
-                fill: "#FFFFFF",
-                stroke: "#6366F1",
-                strokeWidth: 2,
-              }}
+              activeDot={false}
+              isAnimationActive={false}
+              data={chartData.slice(0, lastIndex - 18 + 1)}
             />
-          </AreaChart>
-        </ResponsiveContainer>
 
-        {/* Floating target badge — positioned absolutely */}
-        <div className="relative">
-          <div
-            className="absolute bg-text-primary text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-lg"
-            style={{
-              bottom: "130px",
-              right: "16px",
-            }}
-          >
-            Avg Target ${avgTarget}
-          </div>
-        </div>
+            {/* White dot at the line's endpoint */}
+            <ReferenceDot
+              x={lastIndex - 18}
+              y={chartData[lastIndex - 18]?.price ?? lastPrice}
+              r={5}
+              fill="#FFFFFF"
+              stroke="#6366F1"
+              strokeWidth={2}
+              isFront={true}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </Card>
   );

@@ -19,28 +19,35 @@ export default function DashboardPage() {
       <SideNav />
       <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden m-[10px] bg-white rounded-[20px] border border-surface-border">
         <TopBar />
-        <div className="px-[1px] md:px-[17px] py-6 space-y-6 max-w-7xl mx-auto w-full" style={{ zoom: 1.1 }}>
-          <StatsPanel ticker="NVDA" stats={statsData} />
+        <div className="py-6 space-y-6 pb-0 pr-0 pl-0 w-full" style={{ zoom: 1.1 }}>
+          <StatsPanel className="mx-5" ticker="NVDA" stats={statsData} />
 
-          <PriceTargetCard
-            data={priceTargetData}
-            currentPrice={priceTargetMeta.currentPrice}
-            secondaryLabel={priceTargetMeta.secondaryLabel}
-            secondaryValue={priceTargetMeta.secondaryValue}
-            avgTarget={priceTargetMeta.avgTarget}
-            projectionStartIndex={priceTargetMeta.projectionStartIndex}
-            todayIndex={priceTargetMeta.todayIndex}
-          />
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <AnalystRatingCard data={analystRatingData} />
-            <EarningsCard
-              data={earningsData}
-              estimatedLabel={earningsMeta.estimatedLabel}
-              estimatedValue={earningsMeta.estimatedValue}
-              actualLabel={earningsMeta.actualLabel}
-              actualValue={earningsMeta.actualValue}
+          <div className="border-y border-[#E5E5EA] bg-white shadow-sm">
+            <PriceTargetCard
+              className="border-0 shadow-none rounded-none border-b border-[#E5E5EA] pb-0"
+              data={priceTargetData}
+              currentPrice={priceTargetMeta.currentPrice}
+              secondaryLabel={priceTargetMeta.secondaryLabel}
+              secondaryValue={priceTargetMeta.secondaryValue}
+              avgTarget={priceTargetMeta.avgTarget}
+              projectionStartIndex={priceTargetMeta.projectionStartIndex}
+              todayIndex={priceTargetMeta.todayIndex}
             />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <AnalystRatingCard
+                className="border-0 shadow-none rounded-none border-b lg:border-b-0 lg:border-r border-[#E5E5EA]"
+                data={analystRatingData}
+              />
+              <EarningsCard
+                className="border-0 shadow-none rounded-none"
+                data={earningsData}
+                estimatedLabel={earningsMeta.estimatedLabel}
+                estimatedValue={earningsMeta.estimatedValue}
+                actualLabel={earningsMeta.actualLabel}
+                actualValue={earningsMeta.actualValue}
+              />
+            </div>
           </div>
         </div>
       </main>

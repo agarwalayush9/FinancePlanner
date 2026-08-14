@@ -5,11 +5,12 @@ import type { StatItem } from "@/types/dashboard";
 interface StatsPanelProps {
   ticker: string;
   stats: StatItem[];
+  className?: string;
 }
 
-export function StatsPanel({ ticker, stats }: StatsPanelProps) {
+export function StatsPanel({ ticker, stats, className }: StatsPanelProps) {
   return (
-    <section>
+    <section className={className}>
       <SectionHeader title={`${ticker} Stats`} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (

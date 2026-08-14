@@ -16,6 +16,7 @@ import { LegendItem } from "@/components/ui/legend-item";
 import type { EarningsPoint } from "@/types/dashboard";
 
 interface EarningsCardProps {
+  className?: string;
   data: EarningsPoint[];
   estimatedLabel: string;
   estimatedValue: string;
@@ -54,13 +55,14 @@ export function EarningsCard({
   estimatedValue,
   actualLabel,
   actualValue,
+  className,
 }: EarningsCardProps) {
   return (
-    <Card>
+    <Card className={className}>
       <SectionHeader title="Earnings" />
 
       {/* Legend row */}
-      <div className="flex items-center gap-6 mb-6">
+      <div className="flex items-center gap-6 mb-3">
         <LegendItem color="#9797A3" label={estimatedLabel} value={estimatedValue} />
         <LegendItem color="#6366F1" label={actualLabel} value={actualValue} />
       </div>
@@ -70,7 +72,7 @@ export function EarningsCard({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={data}
-            margin={{ top: 10, right: 10, bottom: 0, left: -10 }}
+            margin={{ top: 0, right: 0, bottom: 0, left: -15 }}
           >
             <CartesianGrid
               horizontal={true}

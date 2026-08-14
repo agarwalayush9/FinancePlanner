@@ -26,7 +26,7 @@ export function StatCard({ stat }: StatCardProps) {
       {/* Label row */}
       <div className="flex items-center gap-2 mb-3">
         <span className={cn("w-2 h-2 rounded-full shrink-0", dotClass)} />
-        <span className="text-sm text-text-secondary truncate">
+        <span className="text-sm font-semibold text-text-primary truncate">
           {stat.label}
         </span>
       </div>

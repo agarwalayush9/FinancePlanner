@@ -1,9 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronsLeft, ChevronsRight, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navGroups, bottomNavItems } from "@/lib/nav-config";
+
+function CollapseIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <line x1="5" y1="4" x2="5" y2="20" />
+      <line x1="19" y1="12" x2="9" y2="12" />
+      <polyline points="14 7 9 12 14 17" />
+    </svg>
+  );
+}
 
 export function SideNav() {
   const [collapsed, setCollapsed] = useState(false);
@@ -16,26 +35,34 @@ export function SideNav() {
       )}
     >
       {/* Header: avatar + workspace name + collapse toggle */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-surface-border">
-        <div className="w-8 h-8 rounded-full bg-accent-indigo flex items-center justify-center text-white text-sm font-bold shrink-0">
-          N
-        </div>
+      <div
+        className={cn(
+          "flex items-center border-b border-surface-border py-4 transition-all duration-300",
+          collapsed ? "justify-center px-2" : "justify-between px-4 gap-3"
+        )}
+      >
         {!collapsed && (
-          <span className="text-sm font-semibold text-text-primary truncate flex-1">
-            NVIDIA
-          </span>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-accent-indigo flex items-center justify-center text-white text-sm font-bold shrink-0">
+              N
+            </div>
+            <span className="text-sm font-semibold text-text-primary truncate">
+              NVIDIA
+            </span>
+          </div>
         )}
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-surface-raised text-text-muted hover:text-text-primary transition-colors shrink-0"
+          className="flex items-center justify-center w-8 h-8 rounded-xl border border-surface-border bg-surface-panel hover:bg-surface-raised text-text-secondary hover:text-text-primary transition-all duration-200 shrink-0 shadow-sm"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? (
-            <ChevronsRight className="w-4 h-4" />
-          ) : (
-            <ChevronsLeft className="w-4 h-4" />
-          )}
+          <CollapseIcon
+            className={cn(
+              "w-4 h-4 transition-transform duration-200",
+              collapsed && "rotate-180"
+            )}
+          />
         </button>
       </div>
 
@@ -52,18 +79,19 @@ export function SideNav() {
               const Icon = item.icon;
               return (
                 <a
-                  key={item.href}
-                  href={item.href}
+                  key={item.label}
+                  href="#"
+                  onClick={(e) => e.preventDefault()}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-150",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors duration-150 cursor-pointer",
                     item.active
-                      ? "bg-surface-raised text-text-primary font-medium"
-                      : "text-text-secondary hover:bg-surface-raised hover:text-text-primary",
-                    collapsed && "justify-center px-0"
+                      ? "bg-[#EFEFF2] text-text-primary font-medium"
+                      : "text-[#9797A3] hover:bg-surface-raised hover:text-text-primary",
+                    collapsed && "justify-center w-10 h-10 mx-auto px-0 rounded-xl"
                   )}
                   title={collapsed ? item.label : undefined}
                 >
-                  <Icon className="w-[18px] h-[18px] shrink-0" />
+                  <Icon className="w-5 h-5 shrink-0" />
                   {!collapsed && <span>{item.label}</span>}
                 </a>
               );
@@ -78,23 +106,24 @@ export function SideNav() {
       {/* Bottom utility items */}
       <div className="mt-auto border-t border-surface-border px-3 py-4 space-y-1">
         {bottomNavItems.map((item) => {
+          const Icon = item.icon;
           if (item.variant === "toggle") {
             return (
               <div
                 key={item.label}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-text-secondary",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[#6B6B76]",
                   collapsed && "justify-center px-0"
                 )}
               >
                 {collapsed ? (
-                  <Moon className="w-[18px] h-[18px] shrink-0" />
+                  Icon && <Icon className="w-5 h-5 shrink-0" />
                 ) : (
                   <>
-                    <Moon className="w-[18px] h-[18px] shrink-0" />
-                    <span className="flex-1">{item.label}</span>
-                    <div className="relative w-9 h-5 rounded-full bg-surface-raised border border-surface-border cursor-pointer transition-colors">
-                      <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white border border-surface-border shadow-sm transition-transform" />
+                    {Icon && <Icon className="w-5 h-5 shrink-0" />}
+                    <span className="flex-1 font-medium">{item.label}</span>
+                    <div className="relative w-11 h-6 rounded-full bg-[#E5E5EA] p-0.5 cursor-pointer transition-colors shrink-0">
+                      <div className="w-5 h-5 rounded-full bg-white shadow-sm transition-transform" />
                     </div>
                   </>
                 )}
@@ -102,26 +131,23 @@ export function SideNav() {
             );
           }
 
-          const Icon = item.icon;
           const isDanger = item.variant === "danger";
-          const isPromo = item.variant === "promo";
 
           return (
             <a
               key={item.label}
-              href={item.href}
+              href="#"
+              onClick={(e) => e.preventDefault()}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-150",
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-150 font-medium cursor-pointer",
                 isDanger
-                  ? "text-status-negative hover:bg-red-50"
-                  : isPromo
-                    ? "text-accent-amber hover:bg-amber-50"
-                    : "text-text-secondary hover:bg-surface-raised hover:text-text-primary",
+                  ? "text-[#EF4444] hover:bg-red-50/50"
+                  : "text-[#6B6B76] hover:bg-surface-raised hover:text-text-primary",
                 collapsed && "justify-center px-0"
               )}
               title={collapsed ? item.label : undefined}
             >
-              {Icon && <Icon className="w-[18px] h-[18px] shrink-0" />}
+              {Icon && <Icon className="w-5 h-5 shrink-0" />}
               {!collapsed && <span>{item.label}</span>}
             </a>
           );
