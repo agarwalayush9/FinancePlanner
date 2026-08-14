@@ -336,15 +336,20 @@ export const analystRatingData: AnalystRatingRow[] = [
 ];
 
 export const earningsData: EarningsPoint[] = [
-  { quarter: "Q2 2025", estimatedEps: 0.84, actualEps: 0.91 },
-  { quarter: "Q3 2025", estimatedEps: 1.09, actualEps: 1.17 },
-  { quarter: "Q4 2025", estimatedEps: 1.35, actualEps: 1.41 },
-  { quarter: "Q1 2026", estimatedEps: 1.59, actualEps: 1.65 },
+  { quarter: "Q1 2025", estimatedEps: 0.70, actualEps: undefined },
+  { quarter: "P1", estimatedEps: 0.71, actualEps: 0.88 },
+  { quarter: "Q2 2025", estimatedEps: 0.74, actualEps: 0.75 },
+  { quarter: "P2", estimatedEps: 0.83, actualEps: 1.12 },
+  { quarter: "Q3 2025", estimatedEps: 0.93, actualEps: 0.98 },
+  { quarter: "P3", estimatedEps: 1.03, actualEps: undefined },
+  { quarter: "Q4 2025", estimatedEps: 1.14, actualEps: 1.12 },
+  { quarter: "P4", estimatedEps: 1.32, actualEps: 1.55 },
+  { quarter: "Q1 2026", estimatedEps: 1.59, actualEps: 1.48 },
 ];
 
 export const earningsMeta = {
   estimatedLabel: "Estimated EPS",
   estimatedValue: "$1.59",
   actualLabel: "Actual EPS",
-  actualValue: "$1.65",
+  actualValue: "1.65",
 };
