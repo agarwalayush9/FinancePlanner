@@ -3,7 +3,7 @@ import { IconButton } from "@/components/ui/icon-button";
 
 export function TopBar() {
   return (
-    <header className="flex flex-wrap items-center justify-between px-4 md:px-8 py-4 border-b border-surface-border bg-surface-panel gap-4">
+    <header className="flex flex-wrap items-center justify-between px-[1px] md:px-[17px] py-4 border-b border-surface-border bg-surface-panel gap-4">
       {/* Search */}
       <div className="relative flex-1 max-w-md min-w-[200px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />

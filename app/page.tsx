@@ -19,7 +19,7 @@ export default function DashboardPage() {
       <SideNav />
       <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden m-[10px] bg-white rounded-[20px] border border-surface-border">
         <TopBar />
-        <div className="px-4 md:px-8 py-6 space-y-6 max-w-7xl mx-auto w-full" style={{ zoom: 1.1 }}>
+        <div className="px-[1px] md:px-[17px] py-6 space-y-6 max-w-7xl mx-auto w-full" style={{ zoom: 1.1 }}>
           <StatsPanel ticker="NVDA" stats={statsData} />
 
           <PriceTargetCard
