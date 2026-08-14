@@ -19,5 +19,5 @@ export interface AnalystRatingRow {
 export interface EarningsPoint {
   quarter: string;
   estimatedEps: number;
-  actualEps: number;
+  actualEps?: number;
 }
